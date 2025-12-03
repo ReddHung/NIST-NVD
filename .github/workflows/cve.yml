@@ -1,4 +1,4 @@
-name: Daily CVE Alert
+name: Daily Chromium Docker Redis CVE Alert
 
 on:
   schedule:
