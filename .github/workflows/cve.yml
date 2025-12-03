@@ -29,9 +29,6 @@ jobs:
       run: |
         python cve.py Chromium Docker Redis > cve_output.txt
 
-    - name: Show result
-      run: cat cve_output.txt
-
     - name: Check if CVE result is empty
       id: check_output
       run: |
