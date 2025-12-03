@@ -38,19 +38,15 @@ jobs:
           echo "found=false" >> $GITHUB_OUTPUT
         fi
 
-    - name: Send Email (Only if CVEs found)
+    - name: Send email via SendGrid
       if: steps.check_output.outputs.found == 'true'
-      uses: dawidd6/action-send-mail@v3
+      uses: peter-evans/sendgrid-action@v2
       with:
-        server_address: smtp.office365.com
-        server_port: 587
-        secure: true
-        username: ${{ secrets.EMAIL_USER }}
-        password: ${{ secrets.EMAIL_PASS }}
-        subject: "NIST NVD CEV Feed"
+        api-key: ${{ secrets.SENDGRID_API_KEY }}
+        from: ${{ secrets.RECIPIENT }}
         to: ${{ secrets.RECIPIENT }}
-        from: ${{ secrets.EMAIL_USER }}
-        body: |
+        subject: "NIST NVD CVE Alert"
+        content: |
           以下是最近 24 小時新發佈的 CVE：
           
           $(cat cve_output.txt)
