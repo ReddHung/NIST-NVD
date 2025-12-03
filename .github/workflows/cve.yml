@@ -38,28 +38,19 @@ jobs:
           echo "found=false" >> $GITHUB_OUTPUT
         fi
 
-    - name: Send Email
+    - name: Send Email (Only if CVEs found)
       if: steps.check_output.outputs.found == 'true'
-      env:
-        EMAIL_USER: ${{ secrets.EMAIL_USER }}
-        EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-        RECIPIENT: ${{ secrets.RECIPIENT }}
-      run: |
-        python - << 'EOF'
-import smtplib
-from email.mime.text import MIMEText
-import os
-
-with open('cve_output.txt', 'r') as f:
-    body = f.read()
-
-msg = MIMEText(body)
-msg["Subject"] = "NIST NVD CVE Feed"
-msg["From"] = os.environ["EMAIL_USER"]
-msg["To"] = os.environ["RECIPIENT"]
-
-with smtplib.SMTP("smtp.gmail.com", 587) as s:
-    s.starttls()
-    s.login(os.environ["EMAIL_USER"], os.environ["EMAIL_PASS"])
-    s.send_message(msg)
-EOF
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.office365.com
+        server_port: 587
+        secure: true
+        username: ${{ secrets.EMAIL_USER }}
+        password: ${{ secrets.EMAIL_PASS }}
+        subject: "NIST NVD CEV Feed"
+        to: ${{ secrets.RECIPIENT }}
+        from: ${{ secrets.EMAIL_USER }}
+        body: |
+          以下是最近 24 小時新發佈的 CVE：
+          
+          $(cat cve_output.txt)
