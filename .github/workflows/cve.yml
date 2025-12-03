@@ -46,6 +46,7 @@ jobs:
       run: |
         body=$(cat cve_output.txt | sed 's/"/\\"/g') 
         curl -X POST \
+          --url https://api.sendgrid.com/v3/mail/send \
           -H "Authorization: Bearer $SENDGRID_API_KEY" \
           -H "Content-Type: application/json" \
           -d "{
@@ -58,5 +59,4 @@ jobs:
               \"type\": \"text/plain\",
               \"value\": \"$body\"
             }]
-          }" \
-          https://api.sendgrid.com/v3/mail/send
+          }"
