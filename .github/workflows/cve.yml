@@ -56,8 +56,8 @@ jobs:
               "Content-Type": "application/json"
             },
              body: JSON.stringify({
-               personalizations: [{ to: [{ email: "${{ process.env.EMAIL_USER }}" }] }],
-               from: { email: "${{ process.env.EMAIL_USER }}" },
+               personalizations: [{ to: [{ email: "${ process.env.EMAIL_USER }" }] }],
+               from: { email: "${ process.env.EMAIL_USER }" },
                subject: "NIST NVD CVE Report",
                content: [{ type: "text/plain", value: content }]
              })
