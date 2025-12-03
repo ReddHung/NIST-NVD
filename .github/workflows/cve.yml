@@ -1,0 +1,65 @@
+name: Daily CVE Alert
+
+on:
+  schedule:
+    # 台灣 UTC+8 → 每天 09:00 = UTC 01:00
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+
+jobs:
+  cve_alert:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        pip install requests
+
+    - name: Run CVE script
+      env:
+        API_KEY: ${{ secrets.API_KEY }}
+      run: |
+        python cve.py Chromium Docker Redis > cve_output.txt
+
+    - name: Check if CVE result is empty
+      id: check_output
+      run: |
+        if grep -q "CVE-" cve_output.txt; then
+          echo "found=true" >> $GITHUB_OUTPUT
+        else
+          echo "found=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Send Email
+      if: steps.check_output.outputs.found == 'true'
+      env:
+        EMAIL_USER: ${{ secrets.EMAIL_USER }}
+        EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+        RECIPIENT: ${{ secrets.RECIPIENT }}
+      run: |
+        python - << 'EOF'
+import smtplib
+from email.mime.text import MIMEText
+import os
+
+with open('cve_output.txt', 'r') as f:
+    body = f.read()
+
+msg = MIMEText(body)
+msg["Subject"] = "NIST NVD CVE Feed"
+msg["From"] = os.environ["EMAIL_USER"]
+msg["To"] = os.environ["RECIPIENT"]
+
+with smtplib.SMTP("smtp.gmail.com", 587) as s:
+    s.starttls()
+    s.login(os.environ["EMAIL_USER"], os.environ["EMAIL_PASS"])
+    s.send_message(msg)
+EOF
