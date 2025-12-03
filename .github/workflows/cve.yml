@@ -39,7 +39,7 @@ jobs:
         fi
 
     - name: Send email via SendGrid
-      if: steps.checkfile.outputs.send_email == 'true'
+      if: steps.check_output.outputs.found == 'true'
       uses: actions/github-script@v7
       with:
         script: |
