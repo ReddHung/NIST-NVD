@@ -12,7 +12,7 @@ RESULTS_PER_PAGE = 50  # 可以改成你想要的數量
 
 def fetch_recent_new_cve(keyword=None, limit=RESULTS_PER_PAGE):
     now = datetime.utcnow()
-    start = (now - timedelta(hours=2160)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    start = (now - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
     end = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
     params = {
