@@ -42,25 +42,36 @@ jobs:
         fi
         cat $GITHUB_OUTPUT
 
-    - name: Send Email via SendGrid (curl)
+    - name: Send email via SendGrid
       if: steps.check_output.outputs.found == 'true'
+      uses: actions/github-script@v7
       env:
         SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         EMAIL_USER: ${{ secrets.RECIPIENT }}      
-      run: |
-        body=$(cat cve_output.txt | sed 's/"/\\"/g') 
-        curl -X POST \
-          --url https://api.sendgrid.com/v3/mail/send \
-          -H "Authorization: Bearer $SENDGRID_API_KEY" \
-          -H "Content-Type: application/json" \
-          -d "{
-            \"personalizations\": [{
-              \"to\": [{\"email\": \"$EMAIL_USER\"}]
-            }],
-            \"from\": {\"email\": \"$EMAIL_USER\"},
-            \"subject\": \"NIST NVD CVE Report\",
-            \"content\": [{
-              \"type\": \"text/plain\",
-              \"value\": \"$body\"
-            }]
-          }"
+      with:
+        script: |
+          const fs = require('fs');
+          const content = fs.readFileSync('cve_output.txt', 'utf8');
+          
+          const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${process.env.SENDGRID_API_KEY}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              personalizations: [{ 
+                to: [{ email: process.env.EMAIL_USER }] 
+              }],
+              from: { email: process.env.EMAIL_USER },
+              subject: "NIST NVD CVE Report",
+              content: [{ type: "text/plain", value: content }]
+            })
+          });
+          
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`SendGrid API error: ${response.status} - ${error}`);
+          }
+          
+          console.log('Email sent successfully');
