@@ -40,6 +40,7 @@ jobs:
         else
           echo "found=false" >> $GITHUB_OUTPUT
         fi
+        cat $GITHUB_OUTPUT
 
     - name: Send Email via SendGrid (curl)
       if: steps.check_output.outputs.found == 'true'
