@@ -40,11 +40,10 @@ jobs:
 
     - name: Send email via SendGrid
       if: steps.check_output.outputs.found == 'true'
-      uses: actions/github-script@v7
+      uses: actions/github-script@v7     
       with:
         script: |
           const fs = require('fs');
-          const fetch = require('node-fetch');
 
           const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
           const content = fs.readFileSync('cve_output.txt', 'utf8');
@@ -52,7 +51,7 @@ jobs:
           await fetch("https://api.sendgrid.com/v3/mail/send", {
             method: "POST",
             headers: {
-              "Authorization": `Bearer ${SENDGRID_API_KEY}`,
+              "Authorization": `Bearer ${secrets.SENDGRID_API_KEY}`,
               "Content-Type": "application/json"
             },
              body: JSON.stringify({
@@ -62,5 +61,3 @@ jobs:
                content: [{ type: "text/plain", value: content }]
              })
            });
-      env:
-        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
