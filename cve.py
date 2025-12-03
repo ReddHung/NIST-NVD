@@ -4,7 +4,8 @@ import sys
 import os
 from datetime import datetime, timedelta
 
-API_KEY = os.environ.get("API_KEY")
+# API_KEY = os.environ.get("API_KEY")
+API_KEY = "1102805f-33e5-41f0-b1b6-b66f48264f59"
 NVD_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 RESULTS_PER_PAGE = 50  # 可以改成你想要的數量
 
