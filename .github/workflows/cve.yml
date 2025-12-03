@@ -44,7 +44,7 @@ jobs:
         SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         EMAIL_USER: ${{ secrets.RECIPIENT }}      
       run: |
-        body=$(cat cve_output.txt | sed 's/"/\\"/g' 
+        body=$(cat cve_output.txt | sed 's/"/\\"/g') 
         curl -X POST \
           -H "Authorization: Bearer $SENDGRID_API_KEY" \
           -H "Content-Type: application/json" \
