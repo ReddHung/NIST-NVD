@@ -44,7 +44,7 @@ jobs:
       with:
         script: |
           const fs = require('fs');
-          const fetch = require('node-fetch';
+          const fetch = require('node-fetch');
 
           const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
           const content = fs.readFileSync('cve_output.txt', 'utf8');
@@ -56,11 +56,11 @@ jobs:
               "Content-Type": "application/json"
             },
              body: JSON.stringify({
-              personalizations: [{ to: [{ email: "${{ secrets.RECIPIENT }}" }] }],
-              from: { email: "${{ secrets.RECIPIENT }}" },
-              subject: "NIST NVD CVE Report",
-              content: [{ type: "text/plain", value: content }]
-            })
-          });
+               personalizations: [{ to: [{ email: "${{ secrets.RECIPIENT }}" }] }],
+               from: { email: "${{ secrets.RECIPIENT }}" },
+               subject: "NIST NVD CVE Report",
+               content: [{ type: "text/plain", value: content }]
+             })
+           });
       env:
         SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
