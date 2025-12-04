@@ -2,7 +2,6 @@ name: Daily Chromium Docker Redis CVE Alert
 
 on:
   schedule:
-    # 台灣 UTC+8 → 每天 09:00 = UTC 01:00
     - cron: "0 1 * * *"
   workflow_dispatch:
 
