@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 API_KEY = os.environ.get("API_KEY")
 NVD_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
-RESULTS_PER_PAGE = 50  # 可以改成你想要的數量
+RESULTS_PER_PAGE = 50
 
 
 def fetch_recent_new_cve(keyword=None, limit=RESULTS_PER_PAGE):
