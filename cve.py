@@ -71,9 +71,7 @@ def print_results(keyword=None):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        # 傳入多個 keyword，就依序抓
         for kw in sys.argv[1:]:
             print_results(kw)
     else:
-        # 沒有傳參數，抓全部最近 24 小時新增 CVE
         print_results()
