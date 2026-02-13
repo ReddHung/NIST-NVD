@@ -40,34 +40,20 @@ jobs:
 
     - name: Send email via SendGrid
       if: steps.check_output.outputs.found == 'true'
-      uses: actions/github-script@v7
-      env:
-        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-        EMAIL_USER: ${{ secrets.RECIPIENT }}      
+      uses: dawidd6/action-send-mail@v3
       with:
-        script: |
-          const fs = require('fs');
-          const content = fs.readFileSync('cve_output.txt', 'utf8');
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.GMAIL_USERNAME }}
+        password: ${{ secrets.GMAIL_PASSWORD }}
+
+        subject: "NIST NVD CVE Report"
+        to: ${{ secrets.RECIPIENT }}
+        from: GitHub Actions <${{ secrets.MAIL_USERNAME }}>
+        
+        body: |
+          你好，這是最新的 CVE 報告：
           
-          const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${process.env.SENDGRID_API_KEY}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              personalizations: [{ 
-                to: [{ email: process.env.EMAIL_USER }] 
-              }],
-              from: { email: process.env.EMAIL_USER },
-              subject: "NIST NVD CVE Report",
-              content: [{ type: "text/plain", value: content }]
-            })
-          });
-          
-          if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`SendGrid API error: ${response.status} - ${error}`);
-          }
-          
-          console.log('Email sent successfully');
+          body: file://cve_output.txt
+
+        # attachments: cve_output.txt
