@@ -38,7 +38,16 @@ jobs:
         fi
         cat $GITHUB_OUTPUT
 
-    - name: Send email via SendGrid
+    - name: Read CVE report
+      id: read_report
+      if: steps.check_output.outputs.found == 'true'
+      run: |
+        EOF=$(dd if=/dev/urandom bs=15 count=1 2>/dev/null | base64)
+        echo "content<<$EOF" >> $GITHUB_OUTPUT
+        cat cve_output.txt >> $GITHUB_OUTPUT
+        echo "$EOF" >> $GITHUB_OUTPUT
+        
+    - name: Send email via GMAIL
       if: steps.check_output.outputs.found == 'true'
       uses: dawidd6/action-send-mail@v3
       with:
@@ -54,6 +63,6 @@ jobs:
         body: |
           你好，這是最新的 CVE 報告：
           
-          body: file://cve_output.txt
+          ${{ steps.read_report.outputs.content }}
 
         # attachments: cve_output.txt
