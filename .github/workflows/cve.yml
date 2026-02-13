@@ -49,7 +49,7 @@ jobs:
 
         subject: "NIST NVD CVE Report"
         to: ${{ secrets.RECIPIENT }}
-        from: GitHub Actions <${{ secrets.MAIL_USERNAME }}>
+        from: GitHub Actions <${{ secrets.GMAIL_USERNAME }}>
         
         body: |
           你好，這是最新的 CVE 報告：
